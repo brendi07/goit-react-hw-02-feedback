@@ -17,36 +17,33 @@ class Feedback extends Component {
     }));
   };
 
-  countTotalFeedback(buttons) {
-    let total = 0;
-    for (let option of Object.values(buttons)) {
-      total += option;
-    }
-    return total;
+  countTotalFeedback() {
+     return Object.values(this.state).reduce(
+       (accumulator, currentValue) => accumulator + currentValue
+     );
   }
 
-  countPositiveFeedbackPercentage(positive, all) {
-    let percents = 0;
-    percents = (positive * 100) / all;
-    return percents.toFixed();
+  countPositiveFeedbackPercentage() {
+  const { good } = this.state;
+  const total = this.countTotalFeedback();
+  return ((good * 100) / total).toFixed();
   }
 
   render() {
+       const { good, neutral, bad } = this.state;
+       const total = this.countTotalFeedback();
     return (
       <Section title="Please leave feedback">
         <Options options={this.state} onLeaveFeedback={this.allClick}></Options>
-        {Object.values(this.state).every(value => value === 0) ? (
+        {total=== 0 ? (
           <Notification messege="There is no feedback"></Notification>
         ) : (
           <Statistics
-            good={this.state.good}
-            neutral={this.state.neutral}
-            bad={this.state.bad}
-            total={this.countTotalFeedback(this.state)}
-            positivePercentage={this.countPositiveFeedbackPercentage(
-              this.state.good,
-              this.countTotalFeedback(this.state)
-            )}
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={total}
+            positivePercentage={this.countPositiveFeedbackPercentage()}
           ></Statistics>
         )}
       </Section>
